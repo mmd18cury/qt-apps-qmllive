@@ -1,34 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2019 Luxoft Sweden AB
-** Copyright (C) 2018 Pelagicore AG
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the QML Live tool.
-**
-** $QT_BEGIN_LICENSE:GPL-QTAS$
-** Commercial License Usage
-** Licensees holding valid commercial Qt Automotive Suite licenses may use
-** this file in accordance with the commercial license agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and The Qt Company.  For
-** licensing terms and conditions see https://www.qt.io/terms-conditions.
-** For further information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 or (at your option) any later version
-** approved by the KDE Free Qt Foundation. The licenses are as published by
-** the Free Software Foundation and appearing in the file LICENSE.GPL3
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-** SPDX-License-Identifier: GPL-3.0
-**
-****************************************************************************/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -38,8 +7,8 @@ Item {
     width: livert.screenWidth
     height: livert.screenHeight
 
-    property color backgroundColor: '#666'
-    property color textColor: '#fff'
+    property color backgroundColor: "#666"
+    property color textColor: "#fff"
 
     Rectangle {
         anchors.fill: parent
@@ -53,38 +22,47 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         height: 32
-
         z: 0
 
         Rectangle {
             anchors.fill: parent
             color: "#E0E0E0"
         }
+
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 8
             anchors.rightMargin: 8
+            spacing: 6
+
             Repeater {
                 model: [
-                    { bg: '#000', text: '#fff' },
-                    { bg: '#666', text: '#000' },
-                    { bg: '#fff', text: '#000' }
+                    { bg: "#000", text: "#fff" },
+                    { bg: "#666", text: "#000" },
+                    { bg: "#fff", text: "#000" }
                 ]
-                Button {
-                    text: " "
-                    Rectangle {
+
+                Rectangle {
+                    width: 24
+                    height: 24
+                    radius: 2
+                    color: modelData.bg
+                    border.width: 1
+                    border.color: "#404040"
+
+                    MouseArea {
                         anchors.fill: parent
-                        anchors.margins: 2
-                        color: modelData.bg
-                    }
-                    onClicked: {
-                        root.backgroundColor = modelData.bg
-                        root.textColor = modelData.text
+                        onClicked: {
+                            root.backgroundColor = modelData.bg
+                            root.textColor = modelData.text
+                        }
                     }
                 }
             }
+
             Item {
-                width: 16; height: 16
+                width: 16
+                height: 16
                 Layout.fillWidth: true
             }
 
@@ -97,16 +75,16 @@ Item {
                 value: 190
             }
         }
-
     }
-
 
     Component {
         id: gridDelegate
+
         FocusScope {
             id: delegateContainer
             width: grid.cellWidth - 4
             height: grid.cellHeight - 4
+
             Item {
                 id: delegate
                 anchors.fill: parent
@@ -131,13 +109,10 @@ Item {
                     anchors.right: parent.right
 
                     height: 0.8 * width
-
                     source: "image://qmlLiveDirectoryPreview/" + path + "/" + modelData
-
                     fillMode: Image.PreserveAspectFit
-                    sourceSize.width: slider.maximumValue
-                    sourceSize.height: slider.maximumValue
-
+                    sourceSize.width: slider.to
+                    sourceSize.height: slider.to
                     asynchronous: true
                     cache: false
                 }
@@ -151,7 +126,6 @@ Item {
 
                     text: modelData
                     color: root.textColor
-
                     textFormat: Text.PlainText
                     elide: Text.ElideMiddle
                     horizontalAlignment: Text.AlignHCenter
@@ -159,13 +133,13 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
-
-                    onClicked: grid.currentIndex = index;
+                    onClicked: grid.currentIndex = index
                     onDoubleClicked: delegate.loadDocument()
                 }
             }
         }
     }
+
     ScrollView {
         id: scrollView
         anchors.top: header.bottom
@@ -173,24 +147,16 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-        //anchors.margins: 30
         GridView {
             id: grid
-
-
             cellWidth: slider.value
             cellHeight: slider.value
-
             keyNavigationWraps: true
-
             focus: true
-
             model: files
-
             delegate: gridDelegate
 
             highlight: Item {
-                id: highlight
                 Rectangle {
                     width: grid.cellWidth
                     height: grid.cellHeight
@@ -201,7 +167,5 @@ Item {
         }
     }
 
-    Component.onCompleted: {
-        scrollView.forceActiveFocus();
-    }
+    Component.onCompleted: scrollView.forceActiveFocus()
 }
