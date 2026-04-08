@@ -29,7 +29,7 @@
 ** SPDX-License-Identifier: GPL-3.0
 **
 ****************************************************************************/
-import QtQuick 2.0
+import QtQuick
 
 Rectangle {
     width: 800

@@ -29,10 +29,9 @@
 ** SPDX-License-Identifier: GPL-3.0
 **
 ****************************************************************************/
-import QtQuick 2.1
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
-import QtQuick.Layouts 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
     id: root
@@ -91,10 +90,11 @@ Item {
 
             Slider {
                 id: slider
-                anchors.verticalCenter: parent.verticalCenter
-                maximumValue: 300
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                from: 80
+                to: 300
                 value: 190
-                minimumValue: 80
             }
         }
 
