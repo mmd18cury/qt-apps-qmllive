@@ -116,7 +116,6 @@ Application::Application(int &argc, char **argv)
     : QApplication(argc, argv)
 {
     setAttribute(Qt::AA_NativeWindows, true);
-    setAttribute(Qt::AA_ImmediateWidgetCreation, true);
 
     setDarkStyle();
 }
@@ -413,11 +412,11 @@ void MasterApplication::listenForArguments()
     }
 
     auto handleConnection = [this](QLocalSocket *connection) {
-        auto QLocalSocket_error = static_cast<void (QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error);
-        connect(connection, QLocalSocket_error, this, [connection]() {
-            qWarning() << "Error receiving arguments:" << connection->errorString();
-            connection->close();
-        });
+        connect(connection, &QLocalSocket::errorOccurred,
+                this, [connection](QLocalSocket::LocalSocketError) {
+                    qWarning() << "Error receiving arguments:" << connection->errorString();
+                    connection->close();
+                });
 
         QPointer<QBuffer> buffer = new QBuffer(connection);
         buffer->open(QIODevice::ReadOnly);
@@ -579,11 +578,11 @@ void SlaveApplication::forwardArguments()
 {
     QLocalSocket *socket = new QLocalSocket(this);
 
-    auto QLocalSocket_error = static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error);
-    connect(socket, QLocalSocket_error, this, [socket]() {
-        qCritical() << "Error forwarding arguments:" << socket->errorString();
-        exit(1);
-    });
+    connect(socket, &QLocalSocket::errorOccurred,
+            this, [socket](QLocalSocket::LocalSocketError) {
+                qCritical() << "Error forwarding arguments:" << socket->errorString();
+                exit(1);
+            });
 
     connect(socket, &QLocalSocket::connected, this, [socket]() {
         QDataStream out(socket);

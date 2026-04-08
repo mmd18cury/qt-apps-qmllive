@@ -97,7 +97,7 @@ void WindowWidget::setHostedWindow(QQuickWindow *hostedWindow)
 
         viewport()->setBackgroundRole(backgroundRole());
         viewport()->setPalette(palette());
-        viewport()->setBackgroundRole(QPalette::Background);
+        viewport()->setBackgroundRole(QPalette::Window);
         setFocusPolicy(Qt::StrongFocus);
         m_hostedWindow->show();
     }
@@ -148,18 +148,24 @@ bool WindowWidget::event(QEvent *e)
     if (m_hostedWindow) {
         switch (e->type()) {
         case QEvent::Wheel: {
-            QWheelEvent *oe = static_cast<QWheelEvent *>(e);
-            if (!viewport()->geometry().contains(oe->pos()))
+            QWheelEvent *oe = static_cast<QWheelEvent*>(e);
+
+            if (!viewport()->geometry().contains(oe->position().toPoint()))
                 break;
 
-            QWheelEvent ne(m_hostedWindow->mapFromGlobal(oe->globalPos()),
-                           oe->globalPos(),
-                           oe->pixelDelta(),
-                           oe->angleDelta(),
-                           oe->delta(),
-                           oe->orientation(),
-                           oe->buttons(),
-                           oe->modifiers());
+            QPointF globalPos = oe->globalPosition();
+            QPointF localPos = m_hostedWindow->mapFromGlobal(globalPos.toPoint());
+
+            QWheelEvent ne(
+                localPos,
+                globalPos,
+                oe->pixelDelta(),
+                oe->angleDelta(),
+                oe->buttons(),
+                oe->modifiers(),
+                oe->phase(),
+                oe->inverted()
+                );
 
             qGuiApp->sendEvent(m_hostedWindow, &ne);
             handled = true;

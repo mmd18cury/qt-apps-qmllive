@@ -44,10 +44,10 @@
 BenchLiveNodeEngine::BenchLiveNodeEngine(QObject *parent)
     : LiveNodeEngine(parent),
       m_ww(0),
-      m_imageProvider(new PreviewImageProvider(this)),
       m_workspaceView(0),
       m_clipToRootObject(false)
 {
+    m_imageProvider = new PreviewImageProvider(this);
     setQmlEngine(new QQmlEngine(this));
     setFallbackView(new QQuickView(qmlEngine(), 0));
 

@@ -31,6 +31,7 @@
 ****************************************************************************/
 
 #include "filesystemmodel.h"
+#include <QRegularExpression>
 
 FileSystemModel::FileSystemModel(QObject *parent) :
     QFileSystemModel(parent) ,
@@ -72,8 +73,13 @@ Qt::ItemFlags FileSystemModel::flags(const QModelIndex &index) const
 
     QString path = filePath(index);
 
-    foreach (QString type, m_allowedTypes) {
-        if (path.contains(QRegExp(type, Qt::CaseInsensitive, QRegExp::Wildcard)))
+    for (const QString &type : m_allowedTypes) {
+        QRegularExpression rx(
+            QRegularExpression::wildcardToRegularExpression(type),
+            QRegularExpression::CaseInsensitiveOption
+            );
+
+        if (rx.match(path).hasMatch())
             return f;
     }
 
